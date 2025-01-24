@@ -69,16 +69,14 @@ public class PostController {
                           Model model) {
 
         if (bindingResult.hasErrors()) {
-
-            String errorMessage = bindingResult.getFieldErrors()
-                    .stream()
-                    .map(err -> err.getDefaultMessage())
-                    .sorted()
-                    .map(msg -> msg.split("-")[1])
-                    .collect(Collectors.joining("<br>"));
-
-            model.addAttribute("errorMessage", errorMessage);
-
+//            String errorMessage = bindingResult.getFieldErrors()
+//                    .stream()
+//                    .map(err -> err.getDefaultMessage())
+//                    .sorted()
+//                    .map(msg -> msg.split("-")[1])
+//                    .collect(Collectors.joining("<br>"));
+//
+//            model.addAttribute("errorMessage", errorMessage);
             return "domain/post/post/write";
         }
 
@@ -93,20 +91,8 @@ public class PostController {
         return "redirect:/posts"; //리다이렉트
     }
 
-    private String getFormHtml(String errorMsg, String title, String content) {
-        return """
-                <div>%s</div>
-                <form method="post">
-                  <input type="text" name="title" placeholder="제목" value="%s"/> <br>
-                  <textarea name="content">%s</textarea> <br>
-                  <input type="submit" value="등록" /> <br>
-                </form>
-                """.formatted(errorMsg, title, content);
-    }
-
     @GetMapping
-    @ResponseBody
-    private String showList() {
+    private String showList(Model model) {
 
         String lis = posts.stream()
                 .map(p -> "<li>" + p.getTitle() + "</li>")
@@ -114,13 +100,9 @@ public class PostController {
 
         String ul = "<ul>" + lis + "</ul>";
 
+        model.addAttribute("posts", posts);
 
-        return """
-                <div>글 목록</div>
-                
-                %s
-                
-                <a href="/posts/write">글쓰기</a>
-                """.formatted(ul);
+        return "domain/post/post/list";
     }
+
 }
